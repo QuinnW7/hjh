@@ -1,0 +1,6 @@
+.DS_Store
+**/.DS_Store
+compress_log.txt
+
+# 网站部署只用 JPG，PNG 原图保留在本地
+images/**/*.png

@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>黄嘉虹 | 作品集</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* ================= 色彩与氛围 ================= */
+        :root {
+            --bg-0: #f9f5f0;
+            --bg-1: #efe6dc;
+            --surface: rgba(255, 251, 246, 0.78);
+            --surface-solid: #fffbf7;
+            --border: rgba(110, 90, 70, 0.12);
+            --border-soft: rgba(110, 90, 70, 0.07);
+            --text: #2a2622;
+            --text-muted: #7a6f63;
+            --accent-warm: rgba(210, 175, 140, 0.22);
+            --accent-cool: rgba(175, 190, 205, 0.15);
+        }
+
+        body { 
+            font-family: 'Inter', -apple-system, "PingFang SC", sans-serif; 
+            background-color: var(--bg-0);
+            color: var(--text); 
+            overflow-x: hidden; 
+        }
+
+        /* 全局氛围背景 */
+        .ambient-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            background: linear-gradient(155deg, #faf6f1 0%, #f2e9df 38%, #e8ddd1 100%);
+        }
+        .ambient-bg::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0.045;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+        .ambient-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(72px);
+            will-change: transform;
+        }
+        .ambient-blob--1 {
+            width: min(52vw, 520px);
+            height: min(52vw, 520px);
+            top: -8%;
+            left: -6%;
+            background: radial-gradient(circle, var(--accent-warm) 0%, transparent 68%);
+            animation: drift-a 22s ease-in-out infinite alternate;
+        }
+        .ambient-blob--2 {
+            width: min(44vw, 440px);
+            height: min(44vw, 440px);
+            right: -4%;
+            top: 32%;
+            background: radial-gradient(circle, var(--accent-cool) 0%, transparent 70%);
+            animation: drift-b 26s ease-in-out infinite alternate;
+        }
+        .ambient-blob--3 {
+            width: min(60vw, 600px);
+            height: min(38vw, 380px);
+            bottom: -12%;
+            left: 28%;
+            background: radial-gradient(ellipse, rgba(195, 165, 135, 0.18) 0%, transparent 72%);
+            animation: drift-c 30s ease-in-out infinite alternate;
+        }
+        @keyframes drift-a { from { transform: translate(0, 0); } to { transform: translate(3%, 4%); } }
+        @keyframes drift-b { from { transform: translate(0, 0); } to { transform: translate(-4%, 2%); } }
+        @keyframes drift-c { from { transform: translate(0, 0); } to { transform: translate(2%, -3%); } }
+        
+        /* 页面切换动效 */
+        .page-section { 
+            position: absolute; top: 0; left: 0; width: 100%;
+            opacity: 0; pointer-events: none; visibility: hidden;
+            height: 0; overflow: hidden; 
+            transition: opacity 0.5s ease, visibility 0.5s;
+        }
+        .page-active { 
+            opacity: 1; pointer-events: auto; visibility: visible; 
+            position: relative; height: auto; min-height: 100vh; overflow: visible; 
+        }
+
+        /* 隐藏横向滚动条 */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .scroll-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 24px; scroll-behavior: smooth; margin-bottom: 20px; }
+        
+        .scroll-item { flex: 0 0 auto; scroll-snap-align: start; margin-right: 32px; transition: transform 0.4s cubic-bezier(0.15, 0, 0.15, 1); }
+        .scroll-item:hover { transform: translateY(-6px); }
+
+        /* 悬浮菜单 */
+        .sticky-index {
+            position: sticky; top: 12px; z-index: 40;
+            backdrop-filter: blur(16px) saturate(1.1);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            box-shadow: 0 8px 32px rgba(60, 45, 30, 0.06);
+        }
+
+        /* 文字下划线 */
+        .link-hover { position: relative; display: inline-block; padding-bottom: 4px; }
+        .link-hover::after { content: ''; position: absolute; width: 100%; transform: scaleX(0); height: 1px; bottom: 0; left: 0; background-color: var(--text); transform-origin: bottom right; transition: transform 0.4s cubic-bezier(0.86, 0, 0.07, 1); }
+        .link-hover:hover::after { transform: scaleX(1); transform-origin: bottom left; }
+
+        .bg-pattern { background: transparent; }
+        .content-card {
+            background: var(--surface);
+            backdrop-filter: blur(14px) saturate(1.05);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 12px 40px rgba(60, 45, 30, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.55);
+            margin-bottom: 40px;
+            scroll-margin-top: 72px;
+        }
+        .badge-pill {
+            background: rgba(255, 251, 246, 0.65);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+        }
+        
+        .play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 56px; height: 56px; background: rgba(255,255,255,0.7); backdrop-filter: blur(4px); border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .play-btn:hover { background: rgba(255,255,255,0.95); transform: translate(-50%, -50%) scale(1.1); }
+        .play-btn::after { content: ''; width: 0; height: 0; border-style: solid; border-width: 8px 0 8px 14px; border-color: transparent transparent transparent #333; margin-left: 4px; }
+        
+        .image-frame { border-radius: 8px; overflow: hidden; border: 1px solid var(--border-soft); box-shadow: 0 4px 16px rgba(60, 45, 30, 0.04); }
+        .scroll-mt { scroll-margin-top: 80px; }
+
+        /* 相册最子页：纵向滚动，每行最多 4 张，保持原始比例 */
+        .album-gallery {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1rem 1.25rem;
+            align-items: start;
+            margin-bottom: 2rem;
+        }
+        @media (max-width: 900px) { .album-gallery { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+        @media (max-width: 640px) { .album-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        .album-item { min-width: 0; }
+        .album-item .image-frame { width: 100%; }
+        .album-item img { display: block; width: 100%; height: auto; }
+
+        /* 懒加载占位 */
+        img.lazy-img { background: #ebe4da; min-height: 120px; }
+        img.lazy-img.is-loaded { background: none; }
+
+        /* 子页紧凑布局 */
+        .sub-page { padding: 1.25rem 1rem 3rem; }
+        @media (min-width: 768px) { .sub-page { padding: 1.5rem 2.5rem 4rem; } }
+        .page-back { margin-bottom: 0.5rem; }
+        .page-title { margin-bottom: 1.25rem; }
+        .page-heading { font-size: 2.25rem; line-height: 1.1; }
+        @media (min-width: 768px) { .page-heading { font-size: 3rem; } }
+
+        /* 双语：中文大、英文小 */
+        .label-en {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #999;
+            display: block;
+        }
+        .label-en-inline {
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #aaa;
+        }
+        .bi-title .label-cn { font-size: 2.25rem; line-height: 1.1; font-weight: 900; color: #333; }
+        @media (min-width: 768px) { .bi-title .label-cn { font-size: 3rem; } }
+        .bi-title .label-en { margin-bottom: 0.35rem; }
+        .bi-row { display: flex; align-items: baseline; gap: 0.65rem; flex-wrap: wrap; }
+        .bi-row .label-cn { font-size: 1rem; font-weight: 700; color: #333; letter-spacing: 0.06em; }
+        .bi-row .label-en { display: inline; font-size: 9px; letter-spacing: 0.14em; }
+        .bi-card-title .label-cn { font-size: 1.75rem; font-weight: 700; color: #333; }
+        @media (min-width: 768px) { .bi-card-title .label-cn { font-size: 1.875rem; } }
+        .bi-card-title .label-cn-sub { font-size: 0.95rem; font-weight: 500; color: #777; margin-top: 0.35rem; }
+        .bi-card-title .label-en { margin-top: 0.2rem; font-size: 9px; }
+        .bi-section-label .label-cn { font-size: 11px; font-weight: 700; color: #999; letter-spacing: 0.1em; }
+        .bi-section-label .label-en { display: inline; font-size: 8px; margin-left: 0.4rem; letter-spacing: 0.12em; }
+        .page-back-bi { display: flex; flex-direction: column; align-items: flex-start; gap: 0.1rem; }
+        .page-back-bi .label-en { font-size: 8px; letter-spacing: 0.14em; }
+        .home-name { font-size: 3rem; line-height: 1.05; font-weight: 900; letter-spacing: 0.14em; color: #333; }
+        @media (min-width: 768px) { .home-name { font-size: 4.5rem; } }
+        @media (min-width: 1024px) { .home-name { font-size: 5.5rem; } }
+        .bi-category-title { display: flex; align-items: baseline; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .bi-category-title .num { font-size: 0.875rem; font-weight: 700; color: #333; letter-spacing: 0.1em; }
+        .bi-category-title .label-cn { font-size: 1.125rem; font-weight: 700; color: #333; letter-spacing: 0.08em; }
+        @media (min-width: 768px) { .bi-category-title .label-cn { font-size: 1.25rem; } }
+        .bi-category-title .label-en { display: inline; font-size: 9px; letter-spacing: 0.14em; margin-left: 0.15rem; }
+        .bi-album-card .label-cn { font-size: 1.25rem; font-weight: 700; color: #333; letter-spacing: 0.06em; display: block; }
+        .bi-album-card .label-en { margin-top: 0.35rem; font-size: 9px; }
+
+        /* 首页：单屏无滚动 */
+        #home.page-active {
+            height: 100vh;
+            max-height: 100vh;
+            overflow: hidden;
+        }
+        .home-wrap {
+            height: 100%;
+            max-width: 920px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .home-stage {
+            position: relative;
+            flex: 1;
+            min-height: 0;
+        }
+        .home-slash {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 92%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, rgba(120, 100, 80, 0.14) 15%, rgba(120, 100, 80, 0.24) 50%, rgba(120, 100, 80, 0.14) 85%, transparent 100%);
+            transform: translate(-50%, -50%) rotate(-36deg);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .home-entry {
+            position: absolute;
+            z-index: 1;
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            max-width: 44%;
+        }
+        .home-entry--tl { top: 18%; left: 6%; text-align: left; }
+        .home-entry--br { bottom: 14%; right: 6%; text-align: right; }
+        .home-footer {
+            flex-shrink: 0;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(216, 207, 195, 0.5);
+        }
+        @media (max-width: 640px) {
+            .home-entry { max-width: 50%; }
+            .home-entry--tl { top: 20%; left: 4%; }
+            .home-entry--br { bottom: 12%; right: 4%; }
+            .home-slash { width: 100%; }
+        }
+    </style>
+</head>
+<body class="text-[#2a2622]">
+
+    <div class="ambient-bg" aria-hidden="true">
+        <div class="ambient-blob ambient-blob--1"></div>
+        <div class="ambient-blob ambient-blob--2"></div>
+        <div class="ambient-blob ambient-blob--3"></div>
+    </div>
+
+    <!-- ================= 1. 首页 (HOME) ================= -->
+    <section id="home" class="page-section page-active px-6 md:px-16 pt-6 md:pt-8 pb-5">
+        <div class="home-wrap">
+            <header class="flex-shrink-0 mb-2">
+                <h1 class="home-name">黄嘉虹</h1>
+                <p class="text-[10px] tracking-widest mt-2 text-[#777777]"><span class="label-en-inline">Jiahong Huang</span> · 视觉创作者 · 影像记录者</p>
+            </header>
+
+            <div class="home-stage">
+                <div class="home-slash" aria-hidden="true"></div>
+
+                <button onclick="goToPage('work')" class="home-entry home-entry--tl group">
+                    <span class="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight link-hover transition-opacity hover:opacity-70 text-[#333333]">工作掠影</span>
+                    <span class="label-en mt-1">Work Glimpses</span>
+                    <span class="block text-xs md:text-sm mt-1 font-medium tracking-wide text-[#777777] group-hover:text-[#333333]">工作 & 项目 ↗</span>
+                </button>
+
+                <button onclick="goToPage('life-index')" class="home-entry home-entry--br group">
+                    <span class="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight link-hover transition-opacity hover:opacity-70 text-[#333333]">生活行旅</span>
+                    <span class="label-en mt-1">Life Journey</span>
+                    <span class="block text-xs md:text-sm mt-1 font-medium tracking-wide text-[#777777] group-hover:text-[#333333]">摄影 & 生活 ↗</span>
+                </button>
+            </div>
+
+            <footer class="home-footer">
+                <p class="text-[10px] tracking-widest text-[#999999]">微信 13430008101 · 邮箱 1009094337@qq.com</p>
+                <p class="text-[10px] tracking-widest text-[#bbbbbb] mt-2">© 2025 黄嘉虹</p>
+            </footer>
+        </div>
+    </section>
+
+    <!-- ================= 2. 事业子页 (WORK) ================= -->
+    <section id="work" class="page-section bg-pattern sub-page">
+        <div class="max-w-[1200px] mx-auto relative">
+            <button onclick="goToPage('home')" class="page-back page-back-bi text-xs font-bold tracking-widest link-hover text-[#777777] hover:text-[#333333] block"><span>← 返回首页</span><span class="label-en">Back to Home</span></button>
+            <div class="page-title bi-title"><span class="label-en">Work Glimpses</span><h2 class="label-cn tracking-tighter">工作掠影</h2><span class="label-en mt-1 normal-case" style="text-transform:none; letter-spacing:0.08em; font-size:11px; color:#aaa;">工作 & 项目</span></div>
+
+            <div class="sticky-index mx-auto w-max px-6 py-3 rounded-full flex flex-wrap gap-6 mb-8">
+                <span class="bi-section-label"><span class="label-cn">索引</span><span class="label-en">Index</span></span>
+                <button onclick="scrollToEl('company-1')" class="text-xs font-bold text-[#555555] hover:text-[#333333] transition">01. 百瑞新 <span class="label-en-inline">Mokwheel</span></button>
+                <button onclick="scrollToEl('company-2')" class="text-xs font-bold text-[#555555] hover:text-[#333333] transition">02. 英沃特 <span class="label-en-inline">Invot</span></button>
+                <button onclick="scrollToEl('company-3')" class="text-xs font-bold text-[#555555] hover:text-[#333333] transition">03. 川崎 <span class="label-en-inline">Kawasaki</span></button>
+                <button onclick="scrollToEl('company-4')" class="text-xs font-bold text-[#555555] hover:text-[#333333] transition">04. 趣外出 <span class="label-en-inline">Fun Out</span></button>
+            </div>
+
+            <div id="company-1" class="content-card relative scroll-mt mt-4">
+                <div class="flex flex-col md:flex-row justify-between items-baseline border-b border-[#d8cfc3]/35 pb-6 mb-8">
+                    <div class="bi-card-title"><span class="label-cn">百瑞新</span><span class="label-en">Mokwheel</span><p class="label-cn-sub">视频剪辑 · 视觉策划</p><span class="label-en">Video Editor & Visual Planner</span></div>
+                    <span class="text-sm badge-pill px-4 py-1 rounded-full font-bold mt-4 md:mt-0 tracking-widest">2024 - 2025</span>
+                </div>
+                <h4 class="bi-section-label mb-6"><span class="label-cn">● 视觉作品</span><span class="label-en">Visual Works</span></h4>
+                <div class="scroll-container hide-scrollbar items-start">
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/百瑞新封面/image_2.jpg" class="w-full h-full object-cover"></div></div>
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/百瑞新封面/image_3.jpg" class="w-full h-full object-cover"></div></div>
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/百瑞新封面/image_4.jpg" class="w-full h-full object-cover"></div></div>
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/百瑞新封面/image_5.jpg" class="w-full h-full object-cover"></div></div>
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/百瑞新封面/image_6.jpg" class="w-full h-full object-cover"></div></div>
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/百瑞新封面/image_7.jpg" class="w-full h-full object-cover"></div></div>
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/百瑞新封面/image_9.jpg" class="w-full h-full object-cover"></div></div>
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/百瑞新封面/image_10.jpg" class="w-full h-full object-cover"></div></div>
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/百瑞新封面/image_11.jpg" class="w-full h-full object-cover"></div></div>
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/百瑞新封面/image_12.jpg" class="w-full h-full object-cover"></div></div>
+                </div>
+            </div>
+
+            <div id="company-2" class="content-card relative scroll-mt">
+                <div class="flex flex-col md:flex-row justify-between items-baseline border-b border-[#d8cfc3]/35 pb-6 mb-8">
+                    <div class="bi-card-title"><span class="label-cn">英沃特</span><span class="label-en">TNT Tattoo / Invot</span><p class="label-cn-sub">摄影剪辑 · 产品视觉</p><span class="label-en">Photographer & Editor</span></div>
+                    <span class="text-sm badge-pill px-4 py-1 rounded-full font-bold mt-4 md:mt-0 tracking-widest">2023 - 2024</span>
+                </div>
+                <h4 class="bi-section-label mb-6"><span class="label-cn">● 影像与摄影</span><span class="label-en">Video & Photo</span></h4>
+                <div class="scroll-container hide-scrollbar items-start">
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/英沃特图片/image_13.jpg" class="w-full h-full object-cover"></div></div>
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/英沃特图片/image_15.jpg" class="w-full h-full object-cover"></div></div>
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/英沃特图片/image_25.jpg" class="w-full h-full object-cover"></div></div>
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/英沃特图片/image_26.jpg" class="w-full h-full object-cover"></div></div>
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/英沃特图片/image_27.jpg" class="w-full h-full object-cover"></div></div>
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/英沃特图片/image_28.jpg" class="w-full h-full object-cover"></div></div>
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/英沃特图片/image_29.jpg" class="w-full h-full object-cover"></div></div>
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/英沃特图片/image_30.jpg" class="w-full h-full object-cover"></div></div>
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/英沃特图片/image_31.jpg" class="w-full h-full object-cover"></div></div>
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/英沃特图片/image_32.jpg" class="w-full h-full object-cover"></div></div>
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/英沃特图片/image_33.jpg" class="w-full h-full object-cover"></div></div>
+                </div>
+            </div>
+
+            <div id="company-3" class="content-card relative scroll-mt">
+                <div class="flex flex-col md:flex-row justify-between items-baseline border-b border-[#d8cfc3]/35 pb-6 mb-8">
+                    <div class="bi-card-title"><span class="label-cn">川崎运动</span><span class="label-en">Kawasaki</span><p class="label-cn-sub">视频运营 · 社媒内容</p><span class="label-en">Video Operations</span></div>
+                    <span class="text-sm badge-pill px-4 py-1 rounded-full font-bold mt-4 md:mt-0 tracking-widest">2023</span>
+                </div>
+                <h4 class="bi-section-label mb-6"><span class="label-cn">● 社媒运营</span><span class="label-en">Social Media</span></h4>
+                <div class="scroll-container hide-scrollbar items-start">
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/image_16.jpg" class="w-full h-full object-cover"></div></div>
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/image_17.jpg" class="w-full h-full object-cover"></div></div>
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/image_18.jpg" class="w-full h-full object-cover"></div></div>
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/image_19.jpg" class="w-full h-full object-cover"></div></div>
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/image_20.jpg" class="w-full h-full object-cover"></div></div>
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/image_21.jpg" class="w-full h-full object-cover"></div></div>
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/image_23.jpg" class="w-full h-full object-cover"></div></div>
+                </div>
+            </div>
+
+            <div id="company-4" class="content-card relative scroll-mt">
+                <div class="flex flex-col md:flex-row justify-between items-baseline border-b border-[#d8cfc3]/35 pb-6 mb-8">
+                    <div class="bi-card-title"><span class="label-cn">趣外出</span><span class="label-en">Fun Out</span><p class="label-cn-sub">实习 · 社媒运营</p><span class="label-en">Internship / Social Media Operations</span></div>
+                    <span class="text-sm badge-pill px-4 py-1 rounded-full font-bold mt-4 md:mt-0 tracking-widest">2018 - 2022</span>
+                </div>
+                <h4 class="bi-section-label mb-6"><span class="label-cn">● 实习作品</span><span class="label-en">Internship Works</span></h4>
+                <div class="scroll-container hide-scrollbar items-start">
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/fungot/image_96.jpg" class="w-full h-full object-cover"></div></div>
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/fungot/image_97.jpg" class="w-full h-full object-cover"></div></div>
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/fungot/image_98.jpg" class="w-full h-full object-cover"></div></div>
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/fungot/image_99.jpg" class="w-full h-full object-cover"></div></div>
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/fungot/image_100.jpg" class="w-full h-full object-cover"></div></div>
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/fungot/image_101.jpg" class="w-full h-full object-cover"></div></div>
+                    <div class="scroll-item w-[260px] md:w-[320px]"><div class="aspect-[3/4] bg-[#ebe4da]/50 image-frame"><img data-src="./images/fungot/image_102.jpg" class="w-full h-full object-cover"></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= 3. 生活大页: 相册菜单 (LIFE INDEX) ================= -->
+    <section id="life-index" class="page-section bg-pattern sub-page">
+        <div class="max-w-[1200px] mx-auto relative">
+            <button onclick="goToPage('home')" class="page-back page-back-bi text-xs font-bold tracking-widest link-hover text-[#777777] hover:text-[#333333] block"><span>← 返回首页</span><span class="label-en">Back to Home</span></button>
+            
+            <div class="page-title bi-title"><span class="label-en">Life Journey</span><h2 class="label-cn tracking-tighter">生活行旅</h2><span class="label-en mt-1 normal-case" style="text-transform:none; letter-spacing:0.08em; font-size:11px; color:#aaa;">摄影 & 生活</span></div>
+
+            <div class="sticky-index mx-auto w-max px-6 py-3 rounded-full flex flex-wrap gap-4 mb-8">
+                <span class="bi-section-label"><span class="label-cn">索引</span><span class="label-en">Index</span></span>
+                <button onclick="scrollToEl('row-travel')" class="text-xs font-bold text-[#555555] hover:text-[#333333] transition">01. 旅行摄影 <span class="label-en-inline">Travel</span></button>
+                <button onclick="scrollToEl('row-event')" class="text-xs font-bold text-[#555555] hover:text-[#333333] transition">02. 活动摄影 <span class="label-en-inline">Event</span></button>
+                <button onclick="scrollToEl('row-music')" class="text-xs font-bold text-[#555555] hover:text-[#333333] transition">03. 音乐现场 <span class="label-en-inline">Music</span></button>
+                <button onclick="scrollToEl('row-portrait')" class="text-xs font-bold text-[#555555] hover:text-[#333333] transition">04. 人像摄影 <span class="label-en-inline">Portrait</span></button>
+                <button onclick="scrollToEl('row-baking')" class="text-xs font-bold text-[#555555] hover:text-[#333333] transition">05. 烘焙 <span class="label-en-inline">Baking</span></button>
+                <button onclick="scrollToEl('row-painting')" class="text-xs font-bold text-[#555555] hover:text-[#333333] transition">06. 绘画 <span class="label-en-inline">Painting</span></button>
+                <button onclick="scrollToEl('row-other')" class="text-xs font-bold text-[#555555] hover:text-[#333333] transition">07. 其他 <span class="label-en-inline">Other</span></button>
+            </div>
+
+            <div id="row-travel" class="mb-14 scroll-mt pt-2">
+                <h3 class="bi-category-title"><span class="num">01</span><span class="label-cn">旅行摄影</span><span class="label-en">Travel</span></h3>
+                <div class="scroll-container hide-scrollbar items-start">
+                    <button onclick="goToPage('album-litang')" class="scroll-item w-[260px] md:w-[320px] text-left group">
+                        <div class="aspect-[3/4] image-frame mb-4"><img data-src="./images/纪录片/image_22.jpg" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"></div>
+                        <div class="bi-album-card"><span class="label-cn">理塘纪实</span><span class="label-en">Documentary ↗</span></div>
+                    </button>
+                </div>
+            </div>
+
+            <div id="row-event" class="mb-14 scroll-mt border-t border-[#d8cfc3]/40 pt-8">
+                <h3 class="bi-category-title"><span class="num">02</span><span class="label-cn">活动摄影</span><span class="label-en">Event</span></h3>
+                <div class="scroll-container hide-scrollbar items-start">
+                    <button onclick="goToPage('album-monv')" class="scroll-item w-[260px] md:w-[320px] text-left group">
+                        <div class="aspect-[3/4] image-frame mb-4"><img data-src="./images/魔女/image_34.jpg" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"></div>
+                        <div class="bi-album-card"><span class="label-cn">魔女</span><span class="label-en">Album ↗</span></div>
+                    </button>
+                </div>
+            </div>
+
+            <div id="row-music" class="mb-14 scroll-mt border-t border-[#d8cfc3]/40 pt-8">
+                <h3 class="bi-category-title"><span class="num">03</span><span class="label-cn">音乐现场</span><span class="label-en">Music Live</span></h3>
+                <div class="scroll-container hide-scrollbar items-start">
+                    <button onclick="goToPage('album-music')" class="scroll-item w-[260px] md:w-[320px] text-left group">
+                        <div class="aspect-[3/4] image-frame mb-4"><img data-src="./images/音乐现场/image_47.jpg" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"></div>
+                        <div class="bi-album-card"><span class="label-cn">音乐现场</span><span class="label-en">Album ↗</span></div>
+                    </button>
+                </div>
+            </div>
+
+            <div id="row-portrait" class="mb-14 scroll-mt border-t border-[#d8cfc3]/40 pt-8">
+                <h3 class="bi-category-title"><span class="num">04</span><span class="label-cn">人像摄影</span><span class="label-en">Portrait</span></h3>
+                <div class="scroll-container hide-scrollbar items-start">
+                    <button onclick="goToPage('album-portrait')" class="scroll-item w-[260px] md:w-[320px] text-left group">
+                        <div class="aspect-[3/4] image-frame mb-4"><img data-src="./images/人像摄影/image_76.jpg" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"></div>
+                        <div class="bi-album-card"><span class="label-cn">人像摄影</span><span class="label-en">Album ↗</span></div>
+                    </button>
+                </div>
+            </div>
+
+            <div id="row-baking" class="mb-14 scroll-mt border-t border-[#d8cfc3]/40 pt-8">
+                <h3 class="bi-category-title"><span class="num">05</span><span class="label-cn">烘焙</span><span class="label-en">Baking</span></h3>
+                <div class="scroll-container hide-scrollbar items-start">
+                    <button onclick="goToPage('album-food')" class="scroll-item w-[260px] md:w-[320px] text-left group">
+                        <div class="aspect-[3/4] image-frame mb-4"><img data-src="./images/食物摄影/image_69.jpg" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"></div>
+                        <div class="bi-album-card"><span class="label-cn">食物摄影</span><span class="label-en">Album ↗</span></div>
+                    </button>
+                </div>
+            </div>
+
+            <div id="row-painting" class="mb-14 scroll-mt border-t border-[#d8cfc3]/40 pt-8">
+                <h3 class="bi-category-title"><span class="num">06</span><span class="label-cn">绘画</span><span class="label-en">Painting</span></h3>
+                <div class="scroll-container hide-scrollbar items-start">
+                    <div class="scroll-item w-[260px] md:w-[320px] text-left opacity-50">
+                        <div class="aspect-[3/4] image-frame mb-4 bg-[#ebe4da]/50 flex items-center justify-center"><span class="text-xs text-[#999999] tracking-widest">整理中</span></div>
+                        <div class="bi-album-card"><span class="label-cn">绘画创作</span><span class="label-en">Coming Soon</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="row-other" class="mb-14 scroll-mt border-t border-[#d8cfc3]/40 pt-8">
+                <h3 class="bi-category-title"><span class="num">07</span><span class="label-cn">其他</span><span class="label-en">Other</span></h3>
+                <div class="scroll-container hide-scrollbar items-start">
+                    <div class="scroll-item w-[260px] md:w-[320px] text-left opacity-50">
+                        <div class="aspect-[3/4] image-frame mb-4 bg-[#ebe4da]/50 flex items-center justify-center"><span class="text-xs text-[#999999] tracking-widest">整理中</span></div>
+                        <div class="bi-album-card"><span class="label-cn">生活记录</span><span class="label-en">Coming Soon</span></div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </section>
+
+
+    <!-- ================= 4. 具体相册内页 ================= -->
+    
+<section id="album-litang" class="page-section bg-pattern sub-page">
+        <div class="max-w-[1200px] mx-auto">
+            <button onclick="goToPage('life-index')" class="page-back page-back-bi text-xs font-bold tracking-widest link-hover text-[#777777] hover:text-[#333333] block"><span>← 返回相册</span><span class="label-en">Back to Albums</span></button>
+            <div class="page-title bi-title"><span class="label-en">Travel / Documentary</span><h2 class="label-cn tracking-tighter">理塘纪实</h2></div>
+            <div class="album-gallery">
+                <div class="album-item"><div class="image-frame relative"><img data-src="./images/纪录片/image_22.jpg" alt="遇见另一个世界"><div class="play-btn"></div></div><p class="text-sm font-bold mt-4 text-[#333333]">📽 遇见另一个世界</p></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/纪实/image_89.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/纪实/image_90.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/纪实/image_91.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/纪实/image_92.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/纪实/image_93.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/纪实/image_94.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/纪实/image_95.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/纪实/image_96.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/纪实/image_97.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/纪实/image_98.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/纪实/image_99.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/纪实/image_100.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/纪实/image_101.jpg" alt=""></div></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="album-monv" class="page-section bg-pattern sub-page">
+        <div class="max-w-[1200px] mx-auto">
+            <button onclick="goToPage('life-index')" class="page-back page-back-bi text-xs font-bold tracking-widest link-hover text-[#777777] hover:text-[#333333] block"><span>← 返回相册</span><span class="label-en">Back to Albums</span></button>
+            <div class="page-title bi-title"><span class="label-en">Event</span><h2 class="label-cn tracking-tighter">魔女</h2></div>
+            <div class="album-gallery">
+                <div class="album-item"><div class="image-frame"><img data-src="./images/魔女/image_34.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/魔女/image_35.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/魔女/image_36.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/魔女/image_37.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/魔女/image_38.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/魔女/image_39.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/魔女/image_40.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/魔女/image_41.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/魔女/image_42.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/魔女/image_43.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/魔女/image_44.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/魔女/image_45.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/魔女/image_46.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/魔女/image_60.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/魔女/image_61.jpg" alt=""></div></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="album-music" class="page-section bg-pattern sub-page">
+        <div class="max-w-[1200px] mx-auto">
+            <button onclick="goToPage('life-index')" class="page-back page-back-bi text-xs font-bold tracking-widest link-hover text-[#777777] hover:text-[#333333] block"><span>← 返回相册</span><span class="label-en">Back to Albums</span></button>
+            <div class="page-title bi-title"><span class="label-en">Music Live</span><h2 class="label-cn tracking-tighter">音乐现场</h2></div>
+            <div class="album-gallery">
+                <div class="album-item"><div class="image-frame"><img data-src="./images/音乐现场/image_47.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/音乐现场/image_48.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/音乐现场/image_49.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/音乐现场/image_50.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/音乐现场/image_51.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/音乐现场/image_52.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/音乐现场/image_53.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/音乐现场/image_54.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/音乐现场/image_55.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/音乐现场/image_56.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/音乐现场/image_57.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/音乐现场/image_58.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/音乐现场/image_59.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/音乐现场/image_62.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/音乐现场/image_63.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/音乐现场/image_64.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/音乐现场/image_65.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/音乐现场/image_66.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/音乐现场/image_67.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/音乐现场/image_68.jpg" alt=""></div></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="album-portrait" class="page-section bg-pattern sub-page">
+        <div class="max-w-[1200px] mx-auto">
+            <button onclick="goToPage('life-index')" class="page-back page-back-bi text-xs font-bold tracking-widest link-hover text-[#777777] hover:text-[#333333] block"><span>← 返回相册</span><span class="label-en">Back to Albums</span></button>
+            <div class="page-title bi-title"><span class="label-en">Portrait</span><h2 class="label-cn tracking-tighter">人像摄影</h2></div>
+            <div class="album-gallery">
+                <div class="album-item"><div class="image-frame"><img data-src="./images/人像摄影/image_76.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/人像摄影/image_77.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/人像摄影/image_78.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/人像摄影/image_79.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/人像摄影/image_80.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/人像摄影/image_81.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/人像摄影/image_82.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/人像摄影/image_83.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/人像摄影/image_84.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/人像摄影/image_85.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/人像摄影/image_86.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/人像摄影/image_87.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/人像摄影/image_88.jpg" alt=""></div></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="album-food" class="page-section bg-pattern sub-page">
+        <div class="max-w-[1200px] mx-auto">
+            <button onclick="goToPage('life-index')" class="page-back page-back-bi text-xs font-bold tracking-widest link-hover text-[#777777] hover:text-[#333333] block"><span>← 返回相册</span><span class="label-en">Back to Albums</span></button>
+            <div class="page-title bi-title"><span class="label-en">Baking / Food</span><h2 class="label-cn tracking-tighter">食物摄影</h2></div>
+            <div class="album-gallery">
+                <div class="album-item"><div class="image-frame"><img data-src="./images/食物摄影/image_69.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/食物摄影/image_70.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/食物摄影/image_71.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/食物摄影/image_72.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/食物摄影/image_73.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/食物摄影/image_74.jpg" alt=""></div></div>
+                <div class="album-item"><div class="image-frame"><img data-src="./images/食物摄影/image_75.jpg" alt=""></div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= JS 逻辑 ================= -->
+    <script>
+        const lazyIO = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) return;
+                const img = entry.target;
+                const src = img.dataset.src;
+                if (!src || img.src) return;
+                img.src = src;
+                img.onload = () => img.classList.add('is-loaded');
+                img.onerror = () => { img.src = src.replace('.jpg', '.jpg'); };
+                lazyIO.unobserve(img);
+            });
+        }, { rootMargin: '300px', threshold: 0.01 });
+
+        function observeLazyImages(root) {
+            root.querySelectorAll('img[data-src]').forEach((img) => {
+                if (!img.dataset.observed) {
+                    img.classList.add('lazy-img');
+                    img.dataset.observed = '1';
+                    lazyIO.observe(img);
+                }
+            });
+        }
+
+        function goToPage(pageId) {
+            const targetPage = document.getElementById(pageId);
+            if (!targetPage) {
+                alert("这个相册内容还在整理中哦！");
+                return;
+            }
+            document.querySelectorAll('.page-section').forEach(page => {
+                page.classList.remove('page-active');
+            });
+            targetPage.classList.add('page-active');
+            observeLazyImages(targetPage);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function scrollToEl(id) {
+            const el = document.getElementById(id);
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const active = document.querySelector('.page-section.page-active');
+            if (active) observeLazyImages(active);
+        });
+    </script>
+
+</body>
+</html>
