@@ -150,10 +150,6 @@
         .album-item .image-frame { width: 100%; }
         .album-item img { display: block; width: 100%; height: auto; }
 
-        /* 懒加载占位 */
-        img.lazy-img { background: #ebe4da; min-height: 120px; }
-        img.lazy-img.is-loaded { background: none; }
-
         /* 子页紧凑布局 */
         .sub-page { padding: 1.25rem 1rem 3rem; }
         @media (min-width: 768px) { .sub-page { padding: 1.5rem 2.5rem 4rem; } }
@@ -596,26 +592,14 @@
 
     <!-- ================= JS 逻辑 ================= -->
     <script>
-        const lazyIO = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-                if (!entry.isIntersecting) return;
-                const img = entry.target;
+        // 仅延迟加载「未打开页面」的图片；进入页面后一次性全部加载，避免滚动时逐张弹出
+        function loadPageImages(page) {
+            page.querySelectorAll('img[data-src]').forEach((img) => {
                 const src = img.dataset.src;
-                if (!src || img.src) return;
+                if (!src || img.getAttribute('src')) return;
                 img.src = src;
-                img.onload = () => img.classList.add('is-loaded');
-                img.onerror = () => { img.src = src.replace('.jpg', '.jpg'); };
-                lazyIO.unobserve(img);
-            });
-        }, { rootMargin: '300px', threshold: 0.01 });
-
-        function observeLazyImages(root) {
-            root.querySelectorAll('img[data-src]').forEach((img) => {
-                if (!img.dataset.observed) {
-                    img.classList.add('lazy-img');
-                    img.dataset.observed = '1';
-                    lazyIO.observe(img);
-                }
+                img.decoding = 'async';
+                img.removeAttribute('data-src');
             });
         }
 
@@ -629,7 +613,7 @@
                 page.classList.remove('page-active');
             });
             targetPage.classList.add('page-active');
-            observeLazyImages(targetPage);
+            loadPageImages(targetPage);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -640,7 +624,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             const active = document.querySelector('.page-section.page-active');
-            if (active) observeLazyImages(active);
+            if (active) loadPageImages(active);
         });
     </script>
 

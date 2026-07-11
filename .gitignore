@@ -2,5 +2,5 @@
 **/.DS_Store
 compress_log.txt
 
-# 网站部署只用 JPG，PNG 原图保留在本地
+# 网站只用 JPG
 images/**/*.png
